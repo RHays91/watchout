@@ -38,7 +38,7 @@ var moveEnemies = function(enemies){
           endX = this.futureX,
           endY = this.futureY;
       return function(t){
-        checkForCollisions(startX, startY);
+        checkForCollisions(startX + (endX - startX)*t, startY + (endY - startY)*t);
         d3.select(this).attr('cx', startX + (endX - startX)*t );
         d3.select(this).attr('cy', startY + (endY - startY)*t );
       };
