@@ -1,7 +1,13 @@
 // start slingin' some d3 here.
-var width = 800;
-var height = 500;
-var data = [{id: 1},{id: 2},{id: 3},{id: 4}];
+var width = d3.select('body').style('width').replace('px', ''),
+    height = d3.select('body').style('height').replace('px', ''),
+    margins = 100,
+    data = [{id: 1},{id: 2},{id: 3},{id: 4}];
+
+// helper functions
+var randomXOnSvg = function(){ return (Math.random() * (width - margins)) + margins; };
+var randomYOnSvg = function(){ return (Math.random() * (height - margins)) + margins; };
+
 
 var svg = d3.select("body").append("svg")
   .attr("width", width)
@@ -12,14 +18,15 @@ var enemies = svg.selectAll("circle")
   .attr('class', 'enemy')
   .enter().append("circle")
   .attr("r", 10)
-  .attr("cx", function(){ return Math.random()* width; })
-  .attr("cy", function(){ return Math.random()*height; });
+  .attr("cx", randomXOnSvg)
+  .attr("cy", randomYOnSvg);
+
 
 var moveEnemies = function(enemies){
   enemies
     .each(function(d, i){
-      this.futureX = Math.random() * height;
-      this.futureY = Math.random() * width;
+      this.futureX = randomXOnSvg();
+      this.futureY = randomYOnSvg();
     })
     .transition()
     .attr("cx", function(){ return this.futureX; })
@@ -37,18 +44,6 @@ var moveEnemies = function(enemies){
     });
 };
 
-var moveEnemyTween = function(data){
-  // this.attr('cx')
-  // return function(timeStep){
-  //   checkForCollisions();
-  //   return enemy
-  //           .attr('cx', axes)
-  //           .attr('cy', )
-  // };
-
-
-}
-
 var checkForCollisions = function(){
 
 }
@@ -56,9 +51,9 @@ var checkForCollisions = function(){
 var player = svg.append('circle')
   .attr('class', 'player')
   .attr("r", 10)
-  .attr("cx", function(){ return Math.random()*width; })
-  .attr("cy", function(){ return Math.random()*height; })
-  .attr('fill', 'red');
+  .attr("cx", randomXOnSvg)
+  .attr("cy", randomYOnSvg)
+  .attr('fill', '#aff');
 
 
 player.call(d3.behavior.drag().on('drag', function(d){
