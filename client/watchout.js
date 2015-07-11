@@ -45,6 +45,8 @@ var moveEnemies = function(enemies){
     });
 };
 
+
+// Collision monitoring
 var checkForCollisions = function(x,y){
   var playerX = +player.attr('cx'),
       playerY = +player.attr('cy'),
@@ -56,9 +58,11 @@ var checkForCollisions = function(x,y){
   if(distanceToPlayer < 20){
     var collisionScoreBoard = d3.select('div.collisions span');
     collisionScoreBoard.text(+collisionScoreBoard.text() + 1);
+    collided = true;
   }
-}
+};
 
+// Player Creation
 var player = svg.append('circle')
   .attr('class', 'player')
   .attr("r", 10)
@@ -66,16 +70,41 @@ var player = svg.append('circle')
   .attr("cy", randomYOnSvg)
   .attr('fill', '#aff');
 
-
+// Player drag functionality
 player.call(d3.behavior.drag().on('drag', function(d){
   player
     .attr('cx', d3.event.dx + +player.attr('cx'))
     .attr('cy', d3.event.dy + +player.attr('cy'));
 }));
-// player.on('drag', function(d){
-//   player.attr('cx', d3.event.dx + player.attr('cx'))
-//     .attr('cy', d3.event.dy + player.attr('cy'));
-// });
 
 
+
+// Scoreboard Management
+var collided = false;
+var updateScore = function(){
+  var playerScoreBoard = d3.select('div.current span');
+  var highScore = d3.select('div.high span');
+
+  //playerScoreBoard.timer(function(){
+    // when a collision occurs
+    if (collided){
+      // reset collided variable
+      collided = false;
+      // score achieved
+      var score = +playerScoreBoard.text();
+      // if score > high score --> set as new high score
+      if (score > +highScore.text() || +highScore.text() === 0){
+        highScore.text(score)
+      }
+      // reset player score
+      playerScoreBoard.text(0);
+    } else {
+    // otherwise continuously increment the score
+    //setInterval(function(){
+    playerScoreBoard.text(+playerScoreBoard.text() + 1);
+  }
+  return;
+    //}, 200);
+};
 setInterval(function(){moveEnemies(enemies);}, 1000);
+setInterval(function(){updateScore();}, 100);
