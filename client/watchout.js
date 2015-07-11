@@ -2,7 +2,7 @@
 var width = d3.select('body').style('width').replace('px', ''),
     height = d3.select('body').style('height').replace('px', ''),
     margins = 100,
-    data = [{id: 1},{id: 2},{id: 3},{id: 4}];
+    data = [1,2,3,4,5,6,7,8,9];
 
 // helper functions
 var randomXOnSvg = function(){ return (Math.random() * (width - margins)) + margins; };
@@ -14,7 +14,7 @@ var svg = d3.select("body").append("svg")
   .attr("height", height);
 
 var enemies = svg.selectAll("circle")
-  .data(data, function(d){ return d.id; })
+  .data(data, function(d){ return d; })
   .attr('class', 'enemy')
   .enter().append("circle")
   .attr("r", 10)
@@ -28,7 +28,7 @@ var moveEnemies = function(enemies){
       this.futureX = randomXOnSvg();
       this.futureY = randomYOnSvg();
     })
-    .transition()
+    .transition().duration(2000)
     .attr("cx", function(){ return this.futureX; })
     .attr("cy", function(){ return this.futureY; })
     .tween('custom', function(){
@@ -38,14 +38,25 @@ var moveEnemies = function(enemies){
           endX = this.futureX,
           endY = this.futureY;
       return function(t){
+        checkForCollisions(startX, startY);
         d3.select(this).attr('cx', startX + (endX - startX)*t );
         d3.select(this).attr('cy', startY + (endY - startY)*t );
       };
     });
 };
 
-var checkForCollisions = function(){
+var checkForCollisions = function(x,y){
+  var playerX = +player.attr('cx'),
+      playerY = +player.attr('cy'),
+      distanceFromPlayerX = playerX - x,
+      distanceFromPlayerY = playerY - y,
+      distanceToPlayer = Math.sqrt(Math.pow(distanceFromPlayerX, 2) + Math.pow(distanceFromPlayerY, 2));
 
+  // console.log(distanceToPlayer);
+  if(distanceToPlayer < 20){
+    var collisionScoreBoard = d3.select('div.collisions span');
+    collisionScoreBoard.text(+collisionScoreBoard.text() + 1);
+  }
 }
 
 var player = svg.append('circle')
