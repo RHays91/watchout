@@ -24,13 +24,14 @@ var setDifficulty = function(){
 var randomXOnSvg = function(){ return (Math.random() * (width - margins)) + margins; };
 var randomYOnSvg = function(){ return (Math.random() * (height - margins)) + margins; };
 
-d3.selectAll('input').on("change", changeEnemies);
+d3.selectAll('input').on("change", setDifficulty);
 
 var svg = d3.select("body").append("svg")
   .attr("width", width)
   .attr("height", height);
 
-var enemies = function(nEnemies){
+var enemies = function(){
+  var nEnemies = setDifficulty;
   return svg.selectAll("circle")
   .data(nEnemies, function(d){ return d; })
   .enter().append("circle")
@@ -39,12 +40,6 @@ var enemies = function(nEnemies){
   .attr("cx", randomXOnSvg)
   .attr("cy", randomYOnSvg);
 }();
-
-var changeEnemies = function(difficulty){
-  var newEnemies = setDifficulty;
-
-
-};
 
 var moveEnemies = function(enemies){
   enemies
