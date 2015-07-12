@@ -2,25 +2,49 @@
 var width = d3.select('body').style('width').replace('px', ''),
     height = d3.select('body').style('height').replace('px', ''),
     margins = 100,
-    data = [1,2,3,4,5,6,7,8,9];
+    data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+var setDifficulty = function(){
+  data = [];
+  var numEnemies;
+  var selection = d3.select('input[name="level"]:checked').node().value
+  if (selection === "easy"){
+    numEnemies = 10;
+  } else if (selection === "medium"){
+    numEnemies = 20;
+  } else {
+    numEnemies = 30;
+  }
+  for (var i = 0; i < numEnemies; i++){
+    data.push(i);
+  }
+  return data;
+};
 
 // helper functions
 var randomXOnSvg = function(){ return (Math.random() * (width - margins)) + margins; };
 var randomYOnSvg = function(){ return (Math.random() * (height - margins)) + margins; };
 
+d3.selectAll('input').on("change", changeEnemies);
 
 var svg = d3.select("body").append("svg")
   .attr("width", width)
   .attr("height", height);
 
-var enemies = svg.selectAll("circle")
-  .data(data, function(d){ return d; })
-  .attr('class', 'enemy')
+var enemies = function(nEnemies){
+  return svg.selectAll("circle")
+  .data(nEnemies, function(d){ return d; })
   .enter().append("circle")
+  .attr('class', 'enemy')
   .attr("r", 10)
   .attr("cx", randomXOnSvg)
   .attr("cy", randomYOnSvg);
+}();
 
+var changeEnemies = function(difficulty){
+  var newEnemies = setDifficulty;
+
+
+};
 
 var moveEnemies = function(enemies){
   enemies
@@ -85,7 +109,6 @@ var updateScore = function(){
   var playerScoreBoard = d3.select('div.current span');
   var highScore = d3.select('div.high span');
 
-  //playerScoreBoard.timer(function(){
     // when a collision occurs
     if (collided){
       // reset collided variable
@@ -104,7 +127,6 @@ var updateScore = function(){
     playerScoreBoard.text(+playerScoreBoard.text() + 1);
   }
   return;
-    //}, 200);
 };
 setInterval(function(){moveEnemies(enemies);}, 1000);
 setInterval(function(){updateScore();}, 100);
